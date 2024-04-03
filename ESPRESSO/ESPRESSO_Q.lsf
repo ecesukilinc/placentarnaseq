@@ -1,0 +1,40 @@
+#BSUB -J ESPRESSO_S 
+#BSUB -W 96:00
+#BSUB -o /rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/LR_RNAseq/ESPRESSO
+#BSUB -e /rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/LR_RNAseq/ESPRESSO
+#BSUB -q e40long 
+#BSUB -n 5
+#BSUB -M 400
+#BSUB -R rusage[mem=400]
+#BSUB -N
+#BSUB -B
+#BSUB -u abhattacharya3@mdanderson.org
+
+module add R/4.3.1
+module add samtools/1.16
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+module add perl/5.36.1
+module add blast/2.14.0
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+
+
+module add hmmer/3.3.2
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+conda activate blast-2.14.0 
+conda activate --stack samtools-1.16.1 
+conda activate --stack hmmer-3.3.2
+
+base_espresso=/rsrch5/home/epi/bhattacharya_lab/software/longreadapps/espresso/src
+espresso_script=/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/LR_RNAseq/ESPRESSO
+base_ref=/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference
+out_folder=/rsrch5/home/epi/bhattacharya_lab/download/01-aws-download/ESPRESSO_out
+
+perl $base_espresso/ESPRESSO_Q.pl \
+-L $out_folder/sampleHash.tsv.updated \
+-A $base_ref/gencode.v44.annotation.gtf \
+-T 5
+
+conda deactivate
+conda deactivate
+conda deactivate
+conda deactivate
