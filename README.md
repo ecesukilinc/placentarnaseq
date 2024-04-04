@@ -1,0 +1,1 @@
+This repository contains scripts for pre-processing, quality control and filtration, de novo transcript assembly, and quantification of ONT long-read RNA-sequencing of 72 samples from the GUSTO cohort.
