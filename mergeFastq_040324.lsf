@@ -1,0 +1,60 @@
+#BSUB -J filter_map[1-72]
+#BSUB -W 48:00
+#BSUB -o /rsrch5/home/epi/bhattacharya_lab/download/out/Output_%J_%I.out
+#BSUB -e /rsrch5/home/epi/bhattacharya_lab/download/out/Output_%J_%I.err 
+#BSUB -q long 
+#BSUB -n 1 			# Request all procs
+#BSUB -M 50			# Maximum!
+#BSUB -R rusage[mem=50]
+#BSUB -u EKilinc@mdanderson.org	# This is useful for error reporting
+## explanation of arguments above:
+## -J arbitrary job name
+## -W wallclock in hour:min
+## -o use this or output (stdout) will be sent via email!
+## -e use this or errors (stderr) will be sent via email!
+## -q queue name (short is the default)
+## -n min_proc[,max_proc]  number of processors required (28=entire node)
+## -M memory in GB 
+## -R memory in GB 
+## -u EmailAddress
+
+module add R/4.3.1
+module add python/3.11.3_numpy-1.24.3
+
+cd /rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/LR_RNAseq
+Rscript mergeFastq_040324.R --sample $LSB_JOBINDEX
+
+sampleID=$(head -n $LSB_JOBINDEX /rsrch5/home/epi/bhattacharya_lab/download/01-aws-download/sampleID.tsv | tail -n 1)
+sampleID=SampleID_$sampleID
+
+out_pass=/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/pass/$sampleID.fastq.gz
+out_trim=/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/$sampleID.fastq.gz
+out_trim_un=/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/$sampleID.fastq
+
+zcat $out_pass | NanoFilt -l 200 -q 7 >> $out_trim_un
+gzip $out_trim_un
+
+bam_folder=/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam
+sam_folder=bam_folder=/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/sam
+ref='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
+aln_out=$sam_folder/$sampleID.sam
+bam_out=$bam_folder/$sampleID.bam
+bam_sorted=$bam_folder/$sampleID.sorted.bam
+
+module load minimap2
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+conda activate minimap2-2.24
+minimap2 -ax splice --splice-flank=no -w 4 -k 14 $ref $out_trim > $aln_out
+
+conda deactivate
+
+module load samtools
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+conda activate samtools-1.16.1
+
+samtools view -S -b $aln_out > $bam_out
+samtools sort $bam_out -o $bam_sorted
+rm $bam_out
+samtools index $bam_sorted
+conda deactivate
+conda deactivate
