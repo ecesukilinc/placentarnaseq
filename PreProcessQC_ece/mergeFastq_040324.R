@@ -51,35 +51,35 @@ for (fq in all_files){
 
 system(paste('gzip ',out))
 
-system(paste('zcat',paste0(out,'.gz |'),
-              NanoFilt,'-l 200  -q 7 >> ',
-              paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
-                     out)))
+# system(paste('zcat',paste0(out,'.gz |'),
+#               NanoFilt,'-l 200  -q 7 >> ',
+#               paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+#                      out)))
 
-system(paste('gzip',paste0(out,'.gz |'),
-              paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
-                     out)))
+# system(paste('gzip',paste0(out,'.gz |'),
+#               paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+#                      out)))
 
-out_trim = paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
-                     out,'.gz')
+# out_trim = paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+#                      out,'.gz')
 
-dir.create('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/')
-bam_folder = '/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/'
+# dir.create('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/')
+# bam_folder = '/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/'
 
-ref='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
+# ref='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
 
-aln_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sam'))
-bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam'))
-bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
-system(paste('minimap2 -ax map-ont --sam-hit-only',
-              ref,out_trim,' > ',aln_out))
+# aln_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sam'))
+# bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam'))
+# bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
+# system(paste('minimap2 -ax map-ont --sam-hit-only',
+#               ref,out_trim,' > ',aln_out))
  
-system(paste('samtools view -S -b',
-           aln_out,' > ',bam_out))
-file.remove(aln_out)
-system(paste('samtools sort',
-              bam_out,' -o ',bam_sort))
-file.remove(bam_out)
-system(paste('samtools index',bam_sort))
+# system(paste('samtools view -S -b',
+#            aln_out,' > ',bam_out))
+# file.remove(aln_out)
+# system(paste('samtools sort',
+#               bam_out,' -o ',bam_sort))
+# file.remove(bam_out)
+# system(paste('samtools index',bam_sort))
 
 
