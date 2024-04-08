@@ -1,3 +1,4 @@
+install.packages("optparse")
 library("optparse")
 option_list <- list(
   make_option(c("-s", "--sample"), action="store_true", default=TRUE,
@@ -9,7 +10,7 @@ opt = parse_args(opt_parser)
 
 sampleID = opt$sample
 
-setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial')
+setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/')
 hash = data.table::fread('lrReadBarcode_SampleIDHash_092623.csv')
 hash$Barcode = paste0('barcode',as.numeric(sapply(strsplit(hash$`Barcode (PCB111.24)`,
                                                            'ode'),
@@ -40,8 +41,8 @@ all_files = file.path(file_list$level1,
 all_files = all_files[grepl('fastq_pass/',
                             all_files)]
 
-dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass')
-setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass')
+dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')
+setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')
 out = paste0('SampleID_',all_samples[sampleID][1],'.fastq')
 for (fq in all_files){
   

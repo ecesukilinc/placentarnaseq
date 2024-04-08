@@ -21,7 +21,7 @@
 module add R/4.3.1
 module add python/3.11.3_numpy-1.24.3
 
-cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial
+cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/
 Rscript mergeFastq_040324.R --sample $LSB_JOBINDEX
 
 sampleID=$(head -n $LSB_JOBINDEX /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/sampleID.tsv | tail -n 1)
