@@ -51,17 +51,17 @@ for (fq in all_files){
 
 system(paste('gzip ',out))
 
-# system(paste('zcat',paste0(out,'.gz |'),
-#               NanoFilt,'-l 200  -q 7 >> ',
-#               paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
-#                      out)))
+system(paste('zcat',paste0(out,'.gz |'),
+              NanoFilt,'-l 200  -q 7 >> ',
+              paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+                     out)))
 
-# system(paste('gzip',paste0(out,'.gz |'),
-#               paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
-#                      out)))
+system(paste('gzip',paste0(out,'.gz |'),
+              paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+                     out)))
 
-# out_trim = paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
-#                      out,'.gz')
+out_trim = paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+                     out,'.gz')
 
 # dir.create('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/')
 # bam_folder = '/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/'
