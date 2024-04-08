@@ -9,7 +9,7 @@ opt = parse_args(opt_parser)
 
 sampleID = opt$sample
 
-setwd('/rsrch5/home/epi/bhattacharya_lab/download/01-aws-download/')
+setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial')
 hash = data.table::fread('lrReadBarcode_SampleIDHash_092623.csv')
 hash$Barcode = paste0('barcode',as.numeric(sapply(strsplit(hash$`Barcode (PCB111.24)`,
                                                            'ode'),
@@ -22,7 +22,7 @@ muxID = unique(hash$MUX)
 bc = as.numeric(strsplit(hash$Barcode[1],'ode')[[1]][2])
 
 file_list = 
-  data.table::fread('/rsrch5/home/epi/bhattacharya_lab/download/fileList.tsv')
+  data.table::fread('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/fileList.tsv')
 
 NanoFilt = 'NanoFilt'
 
@@ -33,7 +33,7 @@ barcode_all = bc
 file_list = subset(file_list,
                    barcode == bc &
                      level1 %in% 
-                     paste0('/rsrch5/home/epi/bhattacharya_lab/download/01-aws-download/output/',
+                     paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/output/',
                             muxID))
 all_files = file.path(file_list$level1,
                       file_list$file)
