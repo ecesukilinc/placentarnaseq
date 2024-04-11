@@ -20,6 +20,8 @@
 
 module load R/4.3.1
 module load python/3.11.3_numpy-1.24.3
+source /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/etc/profile.d/conda.sh
+conda activate /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/envs/NanoLift
 
 cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/
 Rscript mergeFastq_040324.R --sample $LSB_JOBINDEX
@@ -42,21 +44,20 @@ bam_out=$bam_folder/$sampleID.bam
 bam_sorted=$bam_folder/$sampleID.sorted.bam
 
 
-module load minimap2
-eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
-conda activate minimap2-2.24
-
+#module load minimap2-2.24
+#eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+#conda activate minimap2-2.24
 minimap2 -ax splice --splice-flank=no -w 4 -k 14 $ref $out_trim > $aln_out
 
-conda deactivate
+#conda deactivate
 
-module load samtools
-eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
-conda activate samtools-1.16.1
+#module load samtools-1.16.1
+#eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+#conda activate samtools-1.16.1
 
 samtools view -S -b $aln_out > $bam_out
 samtools sort $bam_out -o $bam_sorted
 rm $bam_out
 samtools index $bam_sorted
-conda deactivate
+#conda deactivate
 conda deactivate
