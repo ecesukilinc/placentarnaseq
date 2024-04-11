@@ -1,5 +1,6 @@
-install.packages("optparse")
+.libPaths('/rsrch5/home/neuro_rsrch/ekilinc/R/libs')
 library("optparse")
+library('data.table')
 option_list <- list(
   make_option(c("-s", "--sample"), action="store_true", default=TRUE,
               help="barcode",type='numeric')
@@ -24,6 +25,7 @@ bc = as.numeric(strsplit(hash$Barcode[1],'ode')[[1]][2])
 
 file_list = 
   data.table::fread('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/updatedFileList.tsv')
+  setnames(file_list, c('V1','V2','V3','V4'), c('base_folder', 'level1', 'barcode', 'file'))
 
 NanoFilt = 'NanoFilt'
 
@@ -41,20 +43,29 @@ all_files = file.path(file_list$level1,
 all_files = all_files[grepl('fastq_pass/',
                             all_files)]
 
-dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')
-setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')
-out = paste0('SampleID_',all_samples[sampleID][1],'.fastq')
-for (fq in all_files){
-  
-  system(paste('zcat',fq,'>> ',out))
-  
+if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')) {
+  dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')
 }
 
-system(paste('gzip ',out))
+setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/')
+out = paste0('SampleID_',all_samples[sampleID][1],'.fastq')
+
+if (!file.exists(paste0(out, '.gz'))) {
+  for (fq in all_files) {
+    system(paste('zcat',fq,'>> ',out))
+}
+system(paste('gzip', out))
+} else {
+  message(paste('Merged FASTQ file', paste0(out, '.gz'), 'already exists'))
+}
+
+if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/')) {
+  dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/')
+}
 
 system(paste('zcat',paste0(out,'.gz |'),
               NanoFilt,'-l 200  -q 7 >> ',
-              paste0('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/trim/',
+              paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/',
                      out)))
 
 system(paste('gzip',paste0(out,'.gz |'),
@@ -64,23 +75,5 @@ system(paste('gzip',paste0(out,'.gz |'),
 out_trim = paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/',
                      out,'.gz')
 
-# dir.create('/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/')
-# bam_folder = '/rsrch5/home/epi/bhattacharya_lab/data/Placenta_LRRNAseq/bam/'
-
-# ref='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
-
-# aln_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sam'))
-# bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam'))
-# bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
-# system(paste('minimap2 -ax map-ont --sam-hit-only',
-#               ref,out_trim,' > ',aln_out))
- 
-# system(paste('samtools view -S -b',
-#            aln_out,' > ',bam_out))
-# file.remove(aln_out)
-# system(paste('samtools sort',
-#               bam_out,' -o ',bam_sort))
-# file.remove(bam_out)
-# system(paste('samtools index',bam_sort))
 
 
