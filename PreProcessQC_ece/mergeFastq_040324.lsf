@@ -24,6 +24,7 @@ source /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/etc/profile.d/conda.sh
 conda activate /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/envs/NanoLift
 
 cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/
+
 Rscript mergeFastq_040324.R --sample $LSB_JOBINDEX
 
 sampleID=$(head -n $LSB_JOBINDEX /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/sampleID.tsv | tail -n 1)
@@ -33,31 +34,27 @@ out_pass=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/$sam
 out_trim=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.fastq.gz
 out_trim_un=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.fastq
 
-zcat $out_pass | NanoFilt -l 200 -q 7 >> $out_trim_un
-gzip $out_trim_un
+if [ ! -f "$out_trim" ]; then
+    zcat "$out_pass" | NanoFilt -l 200 -q 7 >> "$out_trim_un"
+    gzip -c "$out_trim_un" > "$out_trim"
+    rm "$out_trim_un"
+else
+    echo "Trimmed FASTQ file $out_trim already exists."
+fi 
 
 bam_folder=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/
 sam_folder=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/
-ref='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
+ref ='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GRCh38.p14.genome.fa'
+
 aln_out=$sam_folder/$sampleID.sam
 bam_out=$bam_folder/$sampleID.bam
 bam_sorted=$bam_folder/$sampleID.sorted.bam
 
-
-#module load minimap2-2.24
-#eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
-#conda activate minimap2-2.24
 minimap2 -ax splice --splice-flank=no -w 4 -k 14 $ref $out_trim > $aln_out
-
-#conda deactivate
-
-#module load samtools-1.16.1
-#eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
-#conda activate samtools-1.16.1
 
 samtools view -S -b $aln_out > $bam_out
 samtools sort $bam_out -o $bam_sorted
 rm $bam_out
 samtools index $bam_sorted
-#conda deactivate
+
 conda deactivate
