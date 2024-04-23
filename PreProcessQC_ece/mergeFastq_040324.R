@@ -120,7 +120,7 @@ bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam')
 bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
 
 system(paste('minimap2 -ax map-ont --sam-hit-only',
-             ref,out_trim,' > ',aln_out))
+             ref,out,' > ',aln_out))
 
 system(paste('samtools view -S -b',
              aln_out,' > ',bam_out))      
