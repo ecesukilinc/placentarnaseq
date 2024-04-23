@@ -63,15 +63,23 @@ system(paste('gzip', out))
   message(paste('Merged FASTQ file', paste0(out, '.gz'), 'already exists'))
 }
 
-##TRIMMING
-# if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/')) {
-#   dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/')
-# }
+if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/')) {
+  dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/')
+}
 
-##NanoFilt
+out_trim = paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/',
+                  paste0('SampleID_',all_samples[sampleID][1],'.fastq.gz'))
 
-# out_trim = paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/',
-#                   paste0('SampleID_',all_samples[sampleID][1],'.fastq.gz'))
+pychopper_out = paste0(out_trim, '.pychopper.fastq')
+pychopper_temp = paste0(pychopper_out, '.tmp')
+
+if (!file.exists(pychopper_out)){
+  system(paste('pychopper -r', pychopper_out, '.report.pdf -u', pychopper_out, '.unclassified.fastq -w', pychopper_out, '.rescued.fastq', out, pychopper_temp))
+  file.rename(pychopper_temp, pychopper_out)
+} else {
+  message(paste('Pychopper output file', pychopper_out, 'already exists.'))
+}
+                 
 
 # if (!file.exists(out_trim)) {
 #   temp_file = paste0(out_trim, '.tmp')
@@ -82,51 +90,31 @@ system(paste('gzip', out))
 #   message(paste('Trimmed FASTQ file', out_trim, 'already exists'))
 # }
 
-## end of NanoFilt
 
-##Pychopper trial
+# if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/')){
+#   dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/')
+# } 
+# bam_folder='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/'
 
-#out_trim = paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/',
-                  #paste0('SampleID_',all_samples[sampleID][1],'.fastq.gz'))
-# pychopper_out = paste0(out, '.pychopper.fastq')
-# pychopper_temp = paste0(pychopper_out,'.tmp')
+# if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/')){
+#   dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/')
+# } 
+# sam_folder='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/'
 
-# if (!file.exists(paste(pychopper_out,'.gz'))){
-#   system(paste('zcat', out, '| pychopper -r',out,'.report.pdf -u',out,'.unclassified.fastq -w',out,'.rescued.fastq',out,pychopper_temp))
-#   system(paste('gzip -c', pychopper_temp, '>>', pychopper_out))
-#   file.remove(pychopper_temp)
-# } else {
-#   message(paste('Trimmed FASTQ file', pychopper_out, 'already exists.'))
-# }
+# ref ='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
 
-##end of TRIMMING
+# aln_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sam'))
+# bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam'))
+# bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
 
-##Alignment
+# system(paste('minimap2 -ax map-ont --sam-hit-only',
+#              ref,out_trim,' > ',aln_out))
 
-if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/')){
-  dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/')
-} 
-bam_folder='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/'
-
-if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/')){
-  dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/')
-} 
-sam_folder='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/'
-
-ref ='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
-
-aln_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sam'))
-bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam'))
-bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
-
-system(paste('minimap2 -ax map-ont --sam-hit-only',
-             ref,out_trim,' > ',aln_out))
-
-system(paste('samtools view -S -b',
-             aln_out,' > ',bam_out))      
-file.remove(aln_out)
-system(paste('samtools sort',
-             bam_out,' -o ',bam_sort))
-file.remove(bam_out)
-system(paste('samtools index',bam_sort))
+# system(paste('samtools view -S -b',
+#              aln_out,' > ',bam_out))      
+# file.remove(aln_out)
+# system(paste('samtools sort',
+#              bam_out,' -o ',bam_sort))
+# file.remove(bam_out)
+# system(paste('samtools index',bam_sort))
 

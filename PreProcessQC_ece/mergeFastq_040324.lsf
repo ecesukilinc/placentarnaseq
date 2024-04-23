@@ -20,8 +20,13 @@
 
 module load R/4.3.1
 module load python/3.11.3_numpy-1.24.3
-source /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/etc/profile.d/conda.sh
-conda activate /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/envs/NanoLift
+
+##For trimming
+#module load pychopper/2.7.9
+#eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+#conda activate pychopper-2.7.9
+#source /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/etc/profile.d/conda.sh
+#conda activate /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/envs/NanoLift
 
 cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/
 
@@ -31,20 +36,53 @@ sampleID=$(head -n $LSB_JOBINDEX /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/
 sampleID=SampleID_$sampleID
 
 out_pass=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/$sampleID.fastq.gz
-out_trim=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.fastq.gz
-out_trim_un=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.fastq
+#out_trim=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.fastq.gz
+#out_trim_un=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.fastq
+#pychopper_out=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.pychopper.fastq.gz
+#pychopper_temp=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/trim/$sampleID.pychopper.fastq
 
-if [ ! -f "$out_trim" ]; then
-    zcat "$out_pass" | NanoFilt -l 200 -q 7 >> "$out_trim_un"
-    gzip -c "$out_trim_un" > "$out_trim"
-    rm "$out_trim_un"
-else
-    echo "Trimmed FASTQ file $out_trim already exists."
-fi 
+##TRIMMING
+
+##Pychopper
+
+#if [ ! -f "$pychopper_out" ]; then
+#   zcat "$out_pass" | pychopper \
+#                        -r "$out_pass.report.pdf" \
+#                        -u "$out_pass.unclassified.fastq" \
+#                        -w "$out_pass.rescued.fastq" \
+#                        "$out_pass" \
+#                        "$pychopper_temp"
+#   gzip -c "$pychopper_temp" > "$pychopper_out"
+#   rm "$pychopper_out"
+#else 
+#   echo "Pychopper output file $pychopper_out already exists"
+#fi
+
+##NanoFilt
+
+# if [ ! -f "$out_trim" ]; then
+#     zcat "$out_pass" | NanoFilt -l 200 -q 7 >> "$out_trim_un"
+#     gzip -c "$out_trim_un" > "$out_trim"
+#     rm "$out_trim_un"
+# else
+#     echo "Trimmed FASTQ file $out_trim already exists."
+# fi 
+
+
+##Alignment
 
 bam_folder=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/
 sam_folder=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/sam/
-ref ='/rsrch5/home/epi/bhattacharya_lab/projects/placenta_mapqtl/reference/GRCh38.p14.genome.fa'
+ref='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
+
+export ref
+
+if [$? -ne 0]; then
+     echo "Minimap2 encountered an error."
+     exist 1
+ else
+     echo "Minimap2 works."
+fi
 
 aln_out=$sam_folder/$sampleID.sam
 bam_out=$bam_folder/$sampleID.bam
