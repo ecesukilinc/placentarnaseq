@@ -1,0 +1,45 @@
+#BSUB -J ESPRESSO_S 
+#BSUB -W 48:00
+#BSUB -o /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/outS
+#BSUB -e /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/outS
+#BSUB -q long 
+#BSUB -n 1
+#BSUB -M 100
+#BSUB -R rusage[mem=100]
+#BSUB -N
+#BSUB -B
+#BSUB -u EKilinc@mdanderson.org
+
+module load R/4.3.1
+module load samtools/1.16
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+module load perl/5.36.1
+module load blast/2.14.0
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+
+module add hmmer/3.3.2
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+conda activate blast-2.14.0 
+conda activate --stack samtools-1.16.1 
+conda activate --stack hmmer-3.3.2
+
+base_espresso=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/software/espresso/src
+espresso_script=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso
+base_ref=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref
+
+perl $base_espresso/ESPRESSO_S.pl \
+-L $espresso_script/sampleHash.tsv \
+-F $base_ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna \
+-A $base_ref/gencode.v44.annotation.gtf \
+-T 1 \
+-O /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/Espresso_outS
+
+conda deactivate
+conda deactivate
+conda deactivate
+conda deactivate
+
+
+
+
+
