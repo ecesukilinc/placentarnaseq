@@ -77,13 +77,6 @@ ref='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.15_GRCh38_
 
 export ref
 
-if [$? -ne 0]; then
-     echo "Minimap2 encountered an error."
-     exist 1
- else
-     echo "Minimap2 works."
-fi
-
 aln_out=$sam_folder/$sampleID.sam
 bam_out=$bam_folder/$sampleID.bam
 bam_sorted=$bam_folder/$sampleID.sorted.bam
@@ -94,5 +87,12 @@ samtools view -S -b $aln_out > $bam_out
 samtools sort $bam_out -o $bam_sorted
 rm $bam_out
 samtools index $bam_sorted
+
+if [$? -ne 0 ]; then
+     echo "Minimap2 encountered an error."
+     exit 1
+ else
+     echo "Minimap2 works."
+fi
 
 conda deactivate

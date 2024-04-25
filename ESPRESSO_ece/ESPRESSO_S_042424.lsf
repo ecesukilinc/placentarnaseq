@@ -28,7 +28,7 @@ espresso_script=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Es
 base_ref=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref
 
 perl $base_espresso/ESPRESSO_S.pl \
--L $espresso_script/sampleHash.tsv \
+-L $espresso_script/sampleHashTrial.tsv \
 -F $base_ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna \
 -A $base_ref/gencode.v44.annotation.gtf \
 -T 1 \

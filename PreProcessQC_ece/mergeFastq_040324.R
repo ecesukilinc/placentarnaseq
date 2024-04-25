@@ -103,6 +103,9 @@ system(paste('gzip', out))
 
 ##Alignment
 
+out_pass = paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/',
+                  paste0('SampleID_',all_samples[sampleID][1],'.fastq.gz'))
+
 if (!dir.exists('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/')){
   dir.create('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam/')
 } 
@@ -120,7 +123,7 @@ bam_out=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.bam')
 bam_sort=file.path(bam_folder,paste0('SampleID_',all_samples[sampleID][1],'.sorted.bam'))
 
 system(paste('minimap2 -ax map-ont --sam-hit-only',
-             ref,out,' > ',aln_out))
+             ref,out_pass,' > ',aln_out))
 
 system(paste('samtools view -S -b',
              aln_out,' > ',bam_out))      
