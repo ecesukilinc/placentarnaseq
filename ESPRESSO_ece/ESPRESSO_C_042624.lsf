@@ -41,7 +41,7 @@ base_ref=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref
 index="$(($LSB_JOBINDEX-$offset))"
 
 perl $base_espresso/ESPRESSO_C.pl \
--I /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/Espresso_outC \
+-I /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/Espresso_outS \
 -F $base_ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna \
 -X $index \
 -T 5
