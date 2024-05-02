@@ -22,8 +22,10 @@ prefix = strsplit(prefix,'/')[[1]][9]
 ### BAM TO BED12
 bed12_file = file.path(getwd(),
                        paste0(prefix,'.bed12'))
-system(paste('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/software/bedtools bamtobed -bed12 -i',
+system(paste('bamtobed -bed12 -i',
              bam_file,'>',bed12_file))
+
+
 
 ### FLAIR CORRECT
 ref_folder='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref'
