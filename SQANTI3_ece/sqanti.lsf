@@ -1,0 +1,31 @@
+#BSUB -J sqanti
+#BSUB -W 100:00
+#BSUB -o /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/SQANTI3/out_s
+#BSUB -e /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/SQANTI3/out_s
+#BSUB -q long 
+#BSUB -n 5 			# Request all procs
+#BSUB -M 160			# Maximum!
+#BSUB -R rusage[mem=160]
+#BSUB -u EKilinc@mdanderson.org	# This is useful for error reporting
+## explanation of arguments above:
+## -J arbitrary job name
+## -W wallclock in hour:min
+## -o use this or output (stdout) will be sent via email!
+## -e use this or errors (stderr) will be sent via email!
+## -q queue name (short is the default)
+## -n min_proc[,max_proc]  number of processors required (28=entire node)
+## -M memory in GB 
+## -R memory in GB 
+## -u EmailAddress
+
+cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/software/SQANTI3-5.2.1
+source /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/etc/profile.d/conda.sh
+conda activate /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/envs/SQANTI3.env
+
+espresso_gtf='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/Espresso_outS/sampleHash_N2_R0_updated.gtf'
+assembly_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
+gtf_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/gencode.v44.annotation.gtf'
+
+python sqanti3_qc.py $espresso_gtf $gtf_file $assembly_file \
+                     -o espresso -d /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/SQANTI3/out     \
+                     --force_id_ignore --report both   

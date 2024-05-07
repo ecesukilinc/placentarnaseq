@@ -11,21 +11,16 @@ opt_parser = OptionParser(option_list=option_list)
 opt = parse_args(opt_parser)
 
 sampleID = opt$sample
+
 setwd('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam')
 hash = read.table('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Espresso/sampleHashTrial.tsv')
 fff = hash$V1
 
-bam_file = fff[sampleID]
 prefix = strsplit(fff[sampleID],'.sorted')[[1]][1]
 prefix = strsplit(prefix,'/')[[1]][9]
 
-### BAM TO BED12
-bed12_file = file.path(getwd(),
-                       paste0(prefix,'.bed12'))
-system(paste('bamtobed -bed12 -i',
-             bam_file,'>',bed12_file))
-
-
+bed12_file = paste0('/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bed12_file/',
+            paste0(prefix,'.sorted.bed12'))
 
 ### FLAIR CORRECT
 ref_folder='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref'

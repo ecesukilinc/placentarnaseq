@@ -1,0 +1,48 @@
+#BSUB -J espresso_c[1-71]
+#BSUB -W 100:00
+#BSUB -o /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Flair/out_c/Output_%J_%I.out
+#BSUB -e /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Flair/out_c/Output_%J_%I.err 
+#BSUB -q long 
+#BSUB -n 5 			# Request all procs
+#BSUB -M 160			# Maximum!
+#BSUB -R rusage[mem=160]
+#BSUB -u EKilinc@mdanderson.org	# This is useful for error reporting
+## explanation of arguments above:
+## -J arbitrary job name
+## -W wallclock in hour:min
+## -o use this or output (stdout) will be sent via email!
+## -e use this or errors (stderr) will be sent via email!
+## -q queue name (short is the default)
+## -n min_proc[,max_proc]  number of processors required (28=entire node)
+## -M memory in GB 
+## -R memory in GB 
+## -u EmailAddress
+
+module add python/3.11.3
+module add samtools
+eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
+conda activate samtools-1.16.1
+module load R/4.3.1
+module load minimap2
+conda activate minimap2-2.24 --stack
+
+source /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/etc/profile.d/conda.sh
+conda activate /rsrch5/home/neuro_rsrch/ekilinc/miniforge3/envs/flair
+
+cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Flair/collapse_bed
+
+assembly_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna'
+gtf_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/gencode.v44.annotation.gtf'
+tra_fa_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/gencode.v44.transcripts.fa'
+
+array=( $( ls . ) )
+
+chr_out=${array[$LSB_JOBINDEX-1]}
+bed_in=$chr_out
+#base=$(echo $chr_out | sed -E 's/(_[^_]+){2}\.bed$//')
+#fq_file=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/${base}.fastq.gz   
+fq_file=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/combined.fastq.gz
+
+flair collapse -g $assembly_file --gtf $gtf_file -q $bed_in -r $fq_file \
+--stringent --check_splice --generate_map --annotation_reliant generate --threads 5 \
+--output /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/Flair/flair_outc/${base}.flaircollapse

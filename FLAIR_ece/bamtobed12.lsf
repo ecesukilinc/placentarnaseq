@@ -22,9 +22,17 @@ module load bedtools/2.30.0
 eval "$(/risapps/rhel8/miniconda3/py39_4.12.0/bin/conda shell.bash hook)"
 conda activate bedtools-2.30.0
 
+output_dir="/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bed12_file"
+mkdir -p $output_dir
+
 cd /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/bam
 
+#for bam in *.bam; do
+#    bedtools bamtobed -i $bam -bed12 > ${bam%.bam}.bed12
+#done
+
 for bam in *.bam; do
-    bedtools bamtobed -i $bam -bed12 > ${bam%.bam}.bed12
+    bedtools bamtobed -i $bam -bed12 > "${output_dir}/${bam%.bam}.bed12"
 done
 
+conda deactivate
