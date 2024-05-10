@@ -39,8 +39,7 @@ array=( $( ls . ) )
 
 chr_out=${array[$LSB_JOBINDEX-1]}
 bed_in=$chr_out
-#base=$(echo $chr_out | sed -E 's/(_[^_]+){2}\.bed$//')
-#fq_file=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/${base}.fastq.gz   
+base=$(echo $chr_out | sed -E 's/(_[^_]+){2}\.bed$//')
 fq_file=/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/pass/combined.fastq.gz
 
 flair collapse -g $assembly_file --gtf $gtf_file -q $bed_in -r $fq_file \

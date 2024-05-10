@@ -27,5 +27,7 @@ assembly_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/GCA_000001405.
 gtf_file='/rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/ref/gencode.v44.annotation.gtf'
 
 python sqanti3_qc.py $espresso_gtf $gtf_file $assembly_file \
+                     --CAGE_peak /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/software/SQANTI3-5.2.1/data/ref_TSS_annotation/human.refTSS_v3.1.hg38.bed    \
+                     --polyA_motif_list /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/software/SQANTI3-5.2.1/data/polyA_motifs/mouse_and_human.polyA_motif.txt    \
                      -o espresso -d /rsrch5/scratch/neuro_rsrch/ekilinc/lnrnatrial/placenta_trial/SQANTI3/out     \
                      --force_id_ignore --report both   
